@@ -1,13 +1,10 @@
 <div align="center">
-  <img alt="Logo" src="./public/favicon-32x32.png" width="100" />
+  <img alt="Logo" src="./public/android-chrome-192x192.png" width="100" />
 </div>
 <h1 align="center">
-  Weather Report
+  ☀️ WeatherReport
 </h1>
-
-# WeatherReport. ☀️
-
-> A weather app developed using React and the [openweathermap API](https://openweathermap.org/).
+<p align="center">A weather app developed using React and the [openweathermap API](https://openweathermap.org/).</p>
 
 ![App gif](./weather_app.gif)
 
