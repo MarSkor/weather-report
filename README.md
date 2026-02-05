@@ -4,7 +4,7 @@
 <h1 align="center">
   ☀️ WeatherReport
 </h1>
-<p align="center">A weather app developed using React and the .</p>
+<p align="center">A weather app developed using React and the OpenWeathermap API</p>
 
 ![App gif](./weather_app.gif)
 
