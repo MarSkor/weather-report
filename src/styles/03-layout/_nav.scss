@@ -1,0 +1,46 @@
+.nav {
+  &__input-suggestions {
+    position: absolute;
+    width: 100%;
+    z-index: 999;
+    margin-top: 5px;
+    background-color: rgb(20, 21, 50);
+    backdrop-filter: blur(10px);
+
+    &--item {
+      cursor: pointer;
+
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+    }
+  }
+
+  &__unit-wrapper {
+    background-color: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 4px;
+  }
+
+  &__unit-indicator {
+    background-color: var(--mantine-color-indigo-9);
+    box-shadow: 0 0 15px rgba(64, 89, 187, 0.534);
+  }
+
+  &__unit-label {
+    font-weight: 700;
+    font-size: var(--mantine-font-size-sm);
+    &[data-active] {
+      color: white;
+    }
+
+    &:not([data-active]) {
+      color: "var(--mantine-color-gray-5)";
+    }
+
+    &:not([data-active]):hover {
+      color: white;
+    }
+  }
+}

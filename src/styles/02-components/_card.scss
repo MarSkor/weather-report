@@ -1,0 +1,9 @@
+.weather-card {
+  transition: transform 0.2s ease;
+  cursor: default;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--mantine-shadow-sm);
+  }
+}

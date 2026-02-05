@@ -1,0 +1,38 @@
+body {
+  margin: 0;
+  font-family: "Quicksand", sans-serif;
+  min-height: 100vh;
+  background-image: linear-gradient(
+    to left,
+    #110f2c,
+    #12133b,
+    #14154a,
+    #161759,
+    #191969
+  );
+  background-attachment: fixed;
+  color: white;
+}
+
+.mantine-Paper-root {
+  background-color: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+
+.layout {
+  &__navbar {
+    position: relative;
+    z-index: 10;
+  }
+  &__weather-wrapper {
+    z-index: 9;
+  }
+}
