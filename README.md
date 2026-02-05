@@ -4,7 +4,7 @@
 <h1 align="center">
   ☀️ WeatherReport
 </h1>
-<p align="center">A weather app developed using React and the [openweathermap API](https://openweathermap.org/).</p>
+<p align="center">A weather app developed using React and the .</p>
 
 ![App gif](./weather_app.gif)
 
@@ -15,6 +15,7 @@
 - React
 - SCSS
 - [Mantine UI](https://mantine.dev/)
+- [OpenWeathermap API](https://openweathermap.org/api)
 
 - Favicon from: [Figma File](https://www.figma.com/community/file/971051749541378755/weather-icons-community)
 
