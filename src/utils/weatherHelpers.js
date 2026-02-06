@@ -46,3 +46,11 @@ export const convertTimeStampToFullDay = (dt) => {
     minute: "2-digit",
   });
 };
+
+export const getUVCategory = (uvi) => {
+  if (uvi <= 2) return "Low";
+  if (uvi <= 5) return "Moderate";
+  if (uvi <= 7) return "High";
+  if (uvi <= 10) return "Very High";
+  return "Extreme";
+};

@@ -29,6 +29,8 @@ export const useWeather = (defaultCity) => {
         throw new Error("Search service unavailable.");
       }
       const data = await res.json();
+
+      console.log("suggestions", data);
       setSuggestions(data.length === 0 ? [{ noResults: true }] : data);
     } catch (error) {
       setSuggestions([{ isError: true, message: error.message }]);
@@ -37,10 +39,11 @@ export const useWeather = (defaultCity) => {
 
   const getWeatherData = useCallback(
     async (lat, lon, cityName, country) => {
+      activeCoords.current = { lat, lon, cityName, country };
+
       setIsLoading(true);
       setIsError(null);
       setSuggestions([]);
-      activeCoords.current = { lat, lon, cityName, country };
 
       try {
         const res = await fetch(
@@ -139,6 +142,18 @@ export const useWeather = (defaultCity) => {
     fetchInitial();
   }, [unit, getWeatherData, defaultCity]);
 
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      if (city.length >= 3) {
+        getSuggestions(city);
+      } else {
+        setSuggestions([]);
+      }
+    }, 400);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [city]);
+
   return {
     weather,
     city,
@@ -148,7 +163,6 @@ export const useWeather = (defaultCity) => {
     unit,
     setUnit,
     suggestions,
-    getSuggestions,
     getWeatherData,
     handleLocationClick,
   };

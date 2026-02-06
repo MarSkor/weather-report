@@ -13,7 +13,7 @@ const WeatherNextHours = ({ data, unit }) => {
         order={4}
         mb="md"
         fw={600}
-        color="gray.5"
+        color="indigo.1"
         style={{ textTransform: "uppercase", letterSpacing: "1px" }}
       >
         Upcoming Hours
@@ -23,14 +23,15 @@ const WeatherNextHours = ({ data, unit }) => {
         {hourlyData.map((hour, index) => (
           <Paper
             key={index}
-            withBorder
             p="sm"
             radius="md"
-            bg="var(--mantine-color-primary)"
             className="weather-card"
+            style={{
+              backgroundColor: "var(--mantine-color-primary)",
+            }}
           >
             <Stack align="center" gap={4}>
-              <Text size="xs" fw={700} c="gray.4">
+              <Text size="sm" fw={600} c="indigo.2">
                 {convertTimeStamp(hour.dt)}
               </Text>
 
@@ -38,7 +39,7 @@ const WeatherNextHours = ({ data, unit }) => {
                 <WeatherIcon size={42} code={hour.weather[0].icon} />
               </Box>
 
-              <Text fw={500} size="lg">
+              <Text fw={500} size="xl">
                 {tempMathRound(hour.temp)}
                 {unitSymbol}
               </Text>

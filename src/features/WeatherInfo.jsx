@@ -7,6 +7,7 @@ import {
   Divider,
   Box,
   ThemeIcon,
+  Flex,
 } from "@mantine/core";
 import {
   Sunrise,
@@ -17,11 +18,13 @@ import {
   CloudRain,
   CloudSnow,
   Wind,
+  SunDim,
 } from "lucide-react";
 import {
   tempMathRound,
   degToDir,
   convertTimeStamp,
+  getUVCategory,
 } from "@/utils/weatherHelpers";
 import WeatherIcon from "@/components/WeatherIcon";
 
@@ -29,32 +32,38 @@ const WeatherInfo = ({ weather, unit }) => {
   const regionNames = new Intl.DisplayNames(["en"], { type: "region" });
   const unitSymbol = unit === "metric" ? "°C" : "°F";
 
-  const WeatherDetail = ({ icon: Icon, label, value }) => (
-    <Group wrap="nowrap" gap="sm">
+  const WeatherDetail = ({ icon: Icon, label, value, color = "indigo.2" }) => (
+    <Flex wrap="nowrap" gap="sm" align="center">
       <ThemeIcon
         variant="light"
-        color="indigo.4"
-        size="md"
+        color={color}
+        size="xl"
         radius="md"
-        style={{ backgroundColor: "rgba(255, 255, 255, 0.1)" }}
+        style={{
+          backgroundColor: "rgba(255, 255, 255, 0.1)",
+          border: "1px solid rgba(255, 255, 255, 0.1)",
+        }}
       >
-        <Icon size={18} />
+        <Icon size={24} />
       </ThemeIcon>
-      <Box>
+      <Flex align={"left"} direction="column" gap={4}>
         <Text
           size="xs"
-          c="gray.5"
-          lh={1}
-          fw={700}
-          style={{ textTransform: "uppercase" }}
+          c="indigo.1"
+          fw={600}
+          style={{
+            textTransform: "uppercase",
+            letterSpacing: "0.5px",
+            opacity: 0.6,
+          }}
         >
           {label}
         </Text>
-        <Text size="sm" fw={600}>
+        <Text size="md" fw={600}>
           {value}
         </Text>
-      </Box>
-    </Group>
+      </Flex>
+    </Flex>
   );
 
   const rain = weather.rain || 0;
@@ -75,34 +84,35 @@ const WeatherInfo = ({ weather, unit }) => {
       <Box component="section">
         <Group justify="space-between" align="flex-start">
           <Box>
-            <Title order={2} lh={1.2} c="white">
+            <Title order={2} c="indigo.1">
               {weather.city}
             </Title>
             <Text c="gray.5" fw={500}>
               {regionNames.of(weather.country)}
             </Text>
           </Box>
-          <Text size="xs" c="gray.5" ta="right">
+          <Text size="sm" c="gray.5" ta="right">
             Updated: <br />
-            <Text span fw={700} c="gray.2">
+            <Text span fw={700} c="indigo.1">
               {convertTimeStamp(weather.dt)}
             </Text>
           </Text>
         </Group>
       </Box>
 
-      <Box py="lg" component="section">
+      <Box component="section">
         <Group justify="space-between" align="center">
           <Stack gap={0}>
             <Title
               order={1}
               c="white"
-              style={{ fontSize: "5rem", lineHeight: 1, letterSpacing: "-2px" }}
+              style={{ fontSize: "5rem", letterSpacing: "-2px" }}
             >
               {tempMathRound(weather.temp)}
               {unitSymbol}
             </Title>
             <Text
+              ta={"left"}
               mt={5}
               size="xl"
               fw={600}
@@ -112,8 +122,8 @@ const WeatherInfo = ({ weather, unit }) => {
               {weather.description}
             </Text>
             <Group gap="xs" mt="md">
-              <Text size="sm" c="gray.5" fw={500}>
-                FEELS LIKE
+              <Text size="sm" c="gray.5" fw={500} tt={"uppercase"}>
+                Feels like
               </Text>
               <Text fw={700} size="md" c="white">
                 {tempMathRound(weather.feels_like)}
@@ -121,12 +131,14 @@ const WeatherInfo = ({ weather, unit }) => {
               </Text>
             </Group>
           </Stack>
-          <WeatherIcon size={120} code={weather.icon} />
+          <Flex direction={"column"}>
+            <WeatherIcon size={140} code={weather.icon} />
+          </Flex>
         </Group>
       </Box>
 
       <Box component="section">
-        <Divider color="gray.8" mb="xl" />
+        <Divider color="indigo.2" style={{ opacity: 0.3 }} mb="xl" />
         <Grid gutter="xl">
           {" "}
           <Grid.Col span={6}>
@@ -134,6 +146,7 @@ const WeatherInfo = ({ weather, unit }) => {
               icon={ThermometerSun}
               label="High"
               value={`${tempMathRound(weather.maxTemp)}${unitSymbol}`}
+              color="orange.5"
             />
           </Grid.Col>
           <Grid.Col span={6}>
@@ -141,6 +154,7 @@ const WeatherInfo = ({ weather, unit }) => {
               icon={ThermometerSnowflake}
               label="Low"
               value={`${tempMathRound(weather.minTemp)}${unitSymbol}`}
+              color="cyan.4"
             />
           </Grid.Col>
           <Grid.Col span={6}>
@@ -148,6 +162,7 @@ const WeatherInfo = ({ weather, unit }) => {
               icon={PrecipIcon}
               label="Precip."
               value={precipValue}
+              color="blue.5"
             />
           </Grid.Col>
           <Grid.Col span={6}>
@@ -155,20 +170,30 @@ const WeatherInfo = ({ weather, unit }) => {
               icon={Droplets}
               label="Humidity"
               value={`${weather.humidity}%`}
+              color="teal.4"
             />
           </Grid.Col>
-          <Grid.Col span={12}>
+          <Grid.Col span={6}>
             <WeatherDetail
               icon={Wind}
               label="Wind"
               value={`${Math.round(weather.wind_speed)} m/s ${degToDir(weather.wind_deg)} ${weather.wind_gust ? `(${Math.round(weather.wind_gust)})` : ""}`}
+              color="indigo.2"
+            />
+          </Grid.Col>
+          <Grid.Col span={6}>
+            <WeatherDetail
+              icon={SunDim}
+              label="UV Index"
+              value={`${weather.uvi} ${getUVCategory(weather.uvi)}`}
+              color="yellow.4"
             />
           </Grid.Col>
         </Grid>
       </Box>
 
       <Box component="section">
-        <Divider color="gray.8" mb="lg" />
+        <Divider color="indigo.2" style={{ opacity: 0.3 }} mb="lg" />
         <Grid>
           <Grid.Col span={6}>
             <Group gap="sm">

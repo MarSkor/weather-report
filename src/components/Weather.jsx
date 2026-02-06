@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Container,
   Grid,
@@ -11,12 +12,17 @@ import {
   Box,
 } from "@mantine/core";
 import { useWeather } from "@/hooks/useWeather";
+import { useClickOutside } from "@mantine/hooks";
 import { Search, MapPin } from "lucide-react";
 import WeatherDashboard from "@/features/WeatherDashboard";
 import ErrorMessage from "./ErrorMessage";
 import DateToday from "./DateToday";
+import WeatherSkeleton from "./WeatherSkeleton";
 
 const Weather = ({ defaultCity }) => {
+  const [opened, setOpened] = useState(false);
+  const clickOutsideRef = useClickOutside(() => setOpened(false));
+
   const {
     weather,
     city,
@@ -26,7 +32,6 @@ const Weather = ({ defaultCity }) => {
     unit,
     setUnit,
     suggestions,
-    getSuggestions,
     getWeatherData,
     handleLocationClick,
   } = useWeather(defaultCity);
@@ -52,14 +57,14 @@ const Weather = ({ defaultCity }) => {
             </Grid.Col>
 
             <Grid.Col span={{ base: 12, md: 4 }}>
-              <Box style={{ position: "relative" }}>
+              <Box ref={clickOutsideRef} style={{ position: "relative" }}>
                 <TextInput
                   className="nav__input"
                   placeholder="Search location... (e.g. Oslo)"
                   value={city}
+                  onFocus={() => setOpened(true)}
                   onChange={(e) => {
                     setCity(e.currentTarget.value);
-                    getSuggestions(e.currentTarget.value);
                   }}
                   leftSection={
                     <ActionIcon
@@ -72,11 +77,7 @@ const Weather = ({ defaultCity }) => {
                       <MapPin size={18} />
                     </ActionIcon>
                   }
-                  rightSection={
-                    <ActionIcon variant="subtle" color="gray">
-                      <Search size={20} />
-                    </ActionIcon>
-                  }
+                  rightSection={<Search size={20} />}
                   bg="var(--mantine-color-primary)"
                   styles={{
                     root: {
@@ -85,7 +86,7 @@ const Weather = ({ defaultCity }) => {
                     },
                   }}
                 />
-                {suggestions.length > 0 && (
+                {opened && suggestions.length > 0 && (
                   <Paper
                     withBorder
                     shadow="md"
@@ -124,13 +125,18 @@ const Weather = ({ defaultCity }) => {
                           key={i}
                           p="xs"
                           className="nav__input-suggestions--item"
-                          onClick={() =>
-                            getWeatherData(s.lat, s.lon, s.name, s.country)
-                          }
+                          onClick={() => {
+                            getWeatherData(s.lat, s.lon, s.name, s.country);
+                            setCity(`${s.name}, ${s.country}`);
+                            setOpened(false);
+                          }}
                         >
-                          <Text size="sm">
+                          <Text size="sm" fw={500}>
                             {s.name}
-                            {s.state ? `, ${s.state}` : ""}, {s.country}
+                          </Text>
+                          <Text size="xs" c="dimmed">
+                            {s.state ? `${s.state}, ` : ""}
+                            {s.country}
                           </Text>
                         </Box>
                       );
@@ -164,10 +170,8 @@ const Weather = ({ defaultCity }) => {
       <Container size="xl" className="layout__weather-wrapper">
         {isError && <ErrorMessage message={isError} />}
 
-        {isLoading && !weather.ready ? (
-          <Group justify="center" py="xl">
-            <Loader size="xl" color="var(--color-yellow)" />
-          </Group>
+        {isLoading ? (
+          <WeatherSkeleton />
         ) : (
           weather.ready && (
             <WeatherDashboard weatherData={weather} unit={unit} />

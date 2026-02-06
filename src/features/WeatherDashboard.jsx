@@ -1,4 +1,4 @@
-import { Grid, Paper, Stack, Alert, Text, Title, Box } from "@mantine/core";
+import { Grid, Paper, Stack, Alert, Text, Box } from "@mantine/core";
 import { TriangleAlert } from "lucide-react";
 import { convertTimeStampToFullDay } from "@/utils/weatherHelpers";
 import WeatherNextHours from "./WeatherNextHours";
@@ -6,14 +6,6 @@ import WeatherNextDays from "./WeatherNextDays";
 import WeatherInfo from "./WeatherInfo";
 
 const WeatherDashboard = ({ weatherData, unit }) => {
-  if (!weatherData) {
-    return (
-      <Paper p="xl" withBorder textAlign="center">
-        <Title order={2}>No Weather to Display</Title>
-      </Paper>
-    );
-  }
-
   return (
     <Stack gap="lg">
       <Grid gutter="lg">

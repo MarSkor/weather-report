@@ -14,7 +14,6 @@ export const theme = createTheme({
     Paper: {
       defaultProps: {
         withBorder: true,
-        shadow: "sm",
       },
     },
     Text: {

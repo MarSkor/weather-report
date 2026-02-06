@@ -1,3 +1,11 @@
+import { CloudRain, Snowflake, Droplets, Wind, SunDim } from "lucide-react";
+import {
+  tempMathRound,
+  convertTimeStampToDay,
+  degToDir,
+  getUVCategory,
+} from "@/utils/weatherHelpers";
+import WeatherIcon from "@/components/WeatherIcon";
 import {
   Paper,
   Text,
@@ -7,15 +15,8 @@ import {
   Title,
   Divider,
   Box,
+  ThemeIcon,
 } from "@mantine/core";
-import {
-  ThermometerSun,
-  ThermometerSnowflake,
-  CloudRain,
-  Snowflake,
-} from "lucide-react";
-import { tempMathRound, convertTimeStampToDay } from "@/utils/weatherHelpers";
-import WeatherIcon from "@/components/WeatherIcon";
 
 const WeatherNextDays = ({ data, unit }) => {
   const unitSymbol = unit === "metric" ? "°C" : "°F";
@@ -26,7 +27,7 @@ const WeatherNextDays = ({ data, unit }) => {
       <Title
         order={4}
         fw={600}
-        color="gray.5"
+        color="indigo.1"
         style={{ textTransform: "uppercase", letterSpacing: "1px" }}
       >
         7-Day Forecast
@@ -36,82 +37,111 @@ const WeatherNextDays = ({ data, unit }) => {
         {dailyData.map((day, index) => (
           <Paper
             key={index}
-            withBorder
-            p="md"
+            p="sm"
             radius="md"
-            shadow="xs"
             className="weather-card"
-            bg="var(--mantine-color-primary)"
+            style={{
+              backgroundColor: "var(--mantine-color-primary)",
+            }}
           >
-            <Stack gap="sm">
-              <Stack gap={0} flex={1}>
-                <Text fw={700} size="md">
-                  {convertTimeStampToDay(day.dt)}
-                </Text>
-                <Text
-                  truncate
-                  size="xs"
-                  c="gray.5"
-                  fw={500}
-                  style={{ textTransform: "capitalize" }}
-                >
-                  {day.weather[0].description}
-                </Text>
-              </Stack>
-              <Group justify="center" py="xs">
-                <WeatherIcon size={42} code={day.weather[0].icon} />
-              </Group>
-
-              <Divider variant="dashed" />
-
-              <Group justify="space-between" wrap="wrap" gap="xs">
-                <Group gap={6} wrap="nowrap" align="center">
-                  <ThermometerSun
-                    size={14}
-                    color="var(--mantine-color-orange-6)"
-                  />
-                  <Text size="sm" fw={500}>
-                    {tempMathRound(day.temp.max)}
-                    {unitSymbol}
+            <Stack gap="md">
+              <Group justify="space-between" align="flex-start" wrap="nowrap">
+                <Stack gap={4}>
+                  <Text fw={600} size="lg" c="white" lh={1.2}>
+                    {convertTimeStampToDay(day.dt)}
                   </Text>
-                </Group>
-
-                <Group gap={6} wrap="nowrap">
-                  <ThermometerSnowflake
-                    size={14}
-                    color="var(--mantine-color-cyan-6)"
-                  />
-                  <Text size="sm" fw={500}>
-                    {tempMathRound(day.temp.min)}
-                    {unitSymbol}
-                  </Text>
-                </Group>
-
-                <Group gap={6} wrap="nowrap">
-                  <CloudRain size={14} color="var(--mantine-color-blue-6)" />
                   <Text
                     size="sm"
+                    c="indigo.2"
                     fw={500}
-                    c={day.rain > 0 ? "blue.4" : "gray.6"}
+                    style={{ textTransform: "capitalize", opacity: 0.7 }}
+                  >
+                    {day.weather[0].description}
+                  </Text>
+                </Stack>
+                <WeatherIcon size={48} code={day.weather[0].icon} />
+              </Group>
+
+              <Group gap="xs" align="center">
+                <Text size="xl" fw={800} c="white" fz={"xl"}>
+                  {tempMathRound(day.temp.max)}
+                  {unitSymbol}
+                </Text>
+                <Box
+                  style={{
+                    height: "4px",
+                    width: "40px",
+                    borderRadius: "2px",
+                    background:
+                      "linear-gradient(90deg, var(--mantine-color-orange-6), var(--mantine-color-cyan-6))",
+                    opacity: 0.6,
+                  }}
+                />
+                <Text
+                  size="md"
+                  fw={600}
+                  c="indigo.1"
+                  fz={"xl"}
+                  style={{ opacity: 0.6 }}
+                >
+                  {tempMathRound(day.temp.min)}
+                  {unitSymbol}
+                </Text>
+              </Group>
+
+              <Divider color="rgba(255, 255, 255, 0.08)" />
+
+              <SimpleGrid cols={2} spacing="xs">
+                <Group gap={6} wrap="nowrap" title="Precipitation">
+                  <ThemeIcon variant="transparent" size="sm" c="blue.4">
+                    <CloudRain size={16} />
+                  </ThemeIcon>
+                  <Text
+                    size="xs"
+                    fw={600}
+                    c={day.rain > 0 ? "blue.2" : "gray.6"}
                   >
                     {Math.round(day.rain || 0)} mm
                   </Text>
                 </Group>
 
                 {day.snow > 0 ? (
-                  <Group gap={6} wrap="nowrap">
-                    <Snowflake
-                      size={14}
-                      color="var(--mantine-color-indigo-4)"
-                    />
-                    <Text size="sm" fw={500}>
+                  <Group gap={6} wrap="nowrap" title="Snowfall">
+                    <ThemeIcon variant="transparent" size="sm" c="indigo.2">
+                      <Snowflake size={16} />
+                    </ThemeIcon>
+
+                    <Text size="xs" fw={600} c="indigo.1">
                       {Math.round(day.snow)} mm
                     </Text>
                   </Group>
                 ) : (
-                  <Box visibleFrom="sm" />
+                  <Group gap={6} wrap="nowrap" title="Humidity">
+                    <ThemeIcon variant="transparent" size="sm" c="teal.4">
+                      <Droplets size={16} />
+                    </ThemeIcon>
+                    <Text size="xs" fw={600} c="gray.6">
+                      {day.humidity}%
+                    </Text>
+                  </Group>
                 )}
-              </Group>
+                <Group gap={6} wrap="nowrap" title="Wind Speed & Direction">
+                  <ThemeIcon variant="transparent" size="sm" c="indigo.2">
+                    <Wind size={16} />
+                  </ThemeIcon>
+                  <Text size="xs" fw={600} c="indigo.1">
+                    {`${Math.round(day.wind_speed)} m/s ${degToDir(day.wind_deg)} ${day.wind_gust ? `(${Math.round(day.wind_gust)})` : ""}`}
+                  </Text>
+                </Group>
+                <Group gap={6} wrap="nowrap" title="UV Index">
+                  <ThemeIcon variant="transparent" size="sm" c="yellow.4">
+                    <SunDim size={16} />
+                  </ThemeIcon>
+                  <Text size="xs" fw={600} c="indigo.1">
+                    {day.uvi} {getUVCategory(day.uvi)}
+                  </Text>
+                </Group>
+              </SimpleGrid>
             </Stack>
           </Paper>
         ))}
