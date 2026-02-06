@@ -14,18 +14,7 @@
 - Mantine UI
 - SCSS
 - [OpenWeathermap API](https://openweathermap.org/api)
-
 - Favicon from: [Figma File](https://www.figma.com/community/file/971051749541378755/weather-icons-community)
-
-## To Implement
-
-[x] Add option to get weather on current location with geolocation.
-
-[x] Toggle between °C and °F.
-
-[x] Updated openweathermap API.
-
-[x] Refactored Project.
 
 ## 🤝 Contributing
 
