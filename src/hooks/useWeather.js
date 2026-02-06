@@ -29,8 +29,6 @@ export const useWeather = (defaultCity) => {
         throw new Error("Search service unavailable.");
       }
       const data = await res.json();
-
-      console.log("suggestions", data);
       setSuggestions(data.length === 0 ? [{ noResults: true }] : data);
     } catch (error) {
       setSuggestions([{ isError: true, message: error.message }]);
