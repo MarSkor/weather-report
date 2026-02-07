@@ -3,10 +3,12 @@ import { baseUrl, apiKey, geoUrl } from "../lib/config";
 
 export const useWeather = (defaultCity) => {
   const [weather, setWeather] = useState({ ready: false });
-  const [city, setCity] = useState(defaultCity);
+  const [city, setCity] = useState("");
   const [isError, setIsError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [unit, setUnit] = useState("metric");
+  const [unit, setUnit] = useState(() => {
+    return localStorage.getItem("weatherUnit") || "metric";
+  });
   const [suggestions, setSuggestions] = useState([]);
 
   const activeCoords = useRef(null);
@@ -19,7 +21,7 @@ export const useWeather = (defaultCity) => {
     }
     try {
       const res = await fetch(
-        `${geoUrl}/direct?q=${query}&limit=5&appid=${apiKey}`,
+        `${geoUrl}/direct?q=${encodeURIComponent(query)}&limit=5&appid=${apiKey}`,
       );
 
       if (!res.ok) {
@@ -39,14 +41,25 @@ export const useWeather = (defaultCity) => {
     async (lat, lon, cityName, country) => {
       activeCoords.current = { lat, lon, cityName, country };
 
+      localStorage.setItem(
+        "last-weather-location",
+        JSON.stringify({
+          lat,
+          lon,
+          cityName,
+          country,
+        }),
+      );
+
+      setSuggestions([]);
       setIsLoading(true);
       setIsError(null);
-      setSuggestions([]);
 
       try {
         const res = await fetch(
           `${baseUrl}?lat=${lat}&lon=${lon}&appid=${apiKey}&units=${unit}`,
         );
+
         if (!res.ok) throw new Error("Failed to fetch weather");
         const data = await res.json();
 
@@ -63,6 +76,9 @@ export const useWeather = (defaultCity) => {
           hourly: data.hourly,
           daily: data.daily,
         });
+        if (cityName !== defaultCity) {
+          setCity(`${cityName}, ${country}`);
+        }
       } catch (error) {
         setIsError(error.message);
       } finally {
@@ -114,15 +130,27 @@ export const useWeather = (defaultCity) => {
   }, [weather.ready, getWeatherData]);
 
   useEffect(() => {
+    localStorage.setItem("weather-unit", unit);
+  }, [unit]);
+
+  useEffect(() => {
     if (activeCoords.current) {
       const { lat, lon, cityName, country } = activeCoords.current;
       getWeatherData(lat, lon, cityName, country);
       return;
     }
+
+    const savedLocation = localStorage.getItem("last-weather-location");
+    if (savedLocation) {
+      const { lat, lon, cityName, country } = JSON.parse(savedLocation);
+      getWeatherData(lat, lon, cityName, country);
+      return;
+    }
+
     const fetchInitial = async () => {
       try {
         const res = await fetch(
-          `${geoUrl}/direct?q=${defaultCity}&limit=1&appid=${apiKey}`,
+          `${geoUrl}/direct?q=${encodeURIComponent(defaultCity)}&limit=1&appid=${apiKey}`,
         );
         const data = await res.json();
         if (data?.[0]) {
