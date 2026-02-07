@@ -6,7 +6,7 @@
 </h1>
 <p align="center">A weather app developed using React and the OpenWeathermap API</p>
 
-![App gif](./weather_app.gif)
+![App gif](./weather_app.png)
 
 ## Built with
 
