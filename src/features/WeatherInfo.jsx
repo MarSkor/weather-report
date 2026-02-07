@@ -25,12 +25,14 @@ import {
   degToDir,
   convertTimeStamp,
   getUVCategory,
+  formatWindSpeed,
 } from "@/utils/weatherHelpers";
 import WeatherIcon from "@/components/WeatherIcon";
 
 const WeatherInfo = ({ weather, unit }) => {
   const regionNames = new Intl.DisplayNames(["en"], { type: "region" });
   const unitSymbol = unit === "metric" ? "°C" : "°F";
+  const weatherUnit = unit === "metric" ? "metric" : "imperial";
 
   const WeatherDetail = ({ icon: Icon, label, value, color = "indigo.2" }) => (
     <Flex wrap="nowrap" gap="sm" align="center">
@@ -51,11 +53,9 @@ const WeatherInfo = ({ weather, unit }) => {
           size="xs"
           c="indigo.1"
           fw={600}
-          style={{
-            textTransform: "uppercase",
-            letterSpacing: "0.5px",
-            opacity: 0.6,
-          }}
+          tt={"uppercase"}
+          lts={0.5}
+          opacity={0.8}
         >
           {label}
         </Text>
@@ -80,7 +80,7 @@ const WeatherInfo = ({ weather, unit }) => {
   }
 
   return (
-    <Stack gap="xl" h="100%" justify="space-between">
+    <Flex direction={"column"} gap="sm" h="100%" justify="space-between">
       <Box component="section">
         <Group justify="space-between" align="flex-start">
           <Box>
@@ -136,9 +136,8 @@ const WeatherInfo = ({ weather, unit }) => {
           </Flex>
         </Group>
       </Box>
-
-      <Box component="section">
-        <Divider color="indigo.2" style={{ opacity: 0.3 }} mb="xl" />
+      <Divider color="indigo.2" style={{ opacity: 0.3 }} />
+      <Flex component="section">
         <Grid gutter="xl">
           {" "}
           <Grid.Col span={6}>
@@ -177,7 +176,13 @@ const WeatherInfo = ({ weather, unit }) => {
             <WeatherDetail
               icon={Wind}
               label="Wind"
-              value={`${Math.round(weather.wind_speed)} m/s ${degToDir(weather.wind_deg)} ${weather.wind_gust ? `(${Math.round(weather.wind_gust)})` : ""}`}
+              value={formatWindSpeed(
+                weather.wind_speed,
+                weatherUnit,
+                weather.wind_deg,
+                weather.wind_gust,
+                degToDir,
+              )}
               color="indigo.2"
             />
           </Grid.Col>
@@ -185,12 +190,12 @@ const WeatherInfo = ({ weather, unit }) => {
             <WeatherDetail
               icon={SunDim}
               label="UV Index"
-              value={`${weather.uvi} ${getUVCategory(weather.uvi)}`}
+              value={`${Math.round(weather.uvi)} ${getUVCategory(weather.uvi)}`}
               color="yellow.4"
             />
           </Grid.Col>
         </Grid>
-      </Box>
+      </Flex>
 
       <Box component="section">
         <Divider color="indigo.2" style={{ opacity: 0.3 }} mb="lg" />
@@ -201,10 +206,19 @@ const WeatherInfo = ({ weather, unit }) => {
                 <Sunrise size={24} />
               </ThemeIcon>
               <Box>
-                <Text size="xs" c="gray.5" fw={700}>
-                  SUNRISE
+                <Text
+                  size="xs"
+                  c="indigo.1"
+                  fw={600}
+                  style={{
+                    textTransform: "uppercase",
+                    letterSpacing: "0.5px",
+                    opacity: 0.8,
+                  }}
+                >
+                  Sunrise
                 </Text>
-                <Text size="md" fw={700} c="white">
+                <Text size="md" fw={700} c="white" lts={0.5}>
                   {convertTimeStamp(weather.sunrise)}
                 </Text>
               </Box>
@@ -216,10 +230,19 @@ const WeatherInfo = ({ weather, unit }) => {
                 <Sunset size={24} />
               </ThemeIcon>
               <Box>
-                <Text size="xs" c="gray.5" fw={700}>
-                  SUNSET
+                <Text
+                  size="xs"
+                  c="indigo.1"
+                  fw={600}
+                  style={{
+                    textTransform: "uppercase",
+                    letterSpacing: "0.5px",
+                    opacity: 0.8,
+                  }}
+                >
+                  Sunset
                 </Text>
-                <Text size="md" fw={700} c="white">
+                <Text size="md" fw={700} c="white" lts={0.5}>
                   {convertTimeStamp(weather.sunset)}
                 </Text>
               </Box>
@@ -227,7 +250,7 @@ const WeatherInfo = ({ weather, unit }) => {
           </Grid.Col>
         </Grid>
       </Box>
-    </Stack>
+    </Flex>
   );
 };
 

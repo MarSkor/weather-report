@@ -1,0 +1,13 @@
+.weather-alert-root {
+  background-color: var(--mantine-color-red-9);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  &:hover {
+    transform: translateY(-2px);
+  }
+}
+
+.alert-modal-content,
+.alert-modal-header {
+  background-color: var(--mantine-color-gray-9);
+}

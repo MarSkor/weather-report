@@ -1,35 +1,34 @@
-import { CloudRain, Snowflake, Droplets, Wind, SunDim } from "lucide-react";
-import {
-  tempMathRound,
-  convertTimeStampToDay,
-  degToDir,
-  getUVCategory,
-} from "@/utils/weatherHelpers";
+import { tempMathRound, convertTimeStampToDay } from "@/utils/weatherHelpers";
 import WeatherIcon from "@/components/WeatherIcon";
 import {
-  Paper,
-  Text,
   SimpleGrid,
+  Paper,
   Stack,
   Group,
-  Title,
-  Divider,
+  Text,
   Box,
-  ThemeIcon,
+  Title,
+  Modal,
 } from "@mantine/core";
+import { useState } from "react";
+import { useDisclosure } from "@mantine/hooks";
+import DailyForecastDetail from "@/components/DailyForecastDetails";
 
 const WeatherNextDays = ({ data, unit }) => {
-  const unitSymbol = unit === "metric" ? "°C" : "°F";
+  const [opened, { open, close }] = useDisclosure(false);
+  const [selectedDay, setSelectedDay] = useState(null);
+  const unitSymbol = unit === "metric" ? "°" : "°";
+  const weatherUnit = unit === "metric" ? "metric" : "imperial";
   const dailyData = data.slice(1, 7);
+
+  const handleCardClick = (day) => {
+    setSelectedDay(day);
+    open();
+  };
 
   return (
     <Stack gap="md">
-      <Title
-        order={4}
-        fw={600}
-        color="indigo.1"
-        style={{ textTransform: "uppercase", letterSpacing: "1px" }}
-      >
+      <Title order={4} fw={600} c="indigo.1" lts={1} tt={"uppercase"}>
         7-Day Forecast
       </Title>
 
@@ -37,115 +36,95 @@ const WeatherNextDays = ({ data, unit }) => {
         {dailyData.map((day, index) => (
           <Paper
             key={index}
-            p="sm"
+            onClick={() => handleCardClick(day)}
+            aria-label={`View details for ${convertTimeStampToDay(day.dt)}`}
+            p="md"
             radius="md"
-            className="weather-card"
-            style={{
-              backgroundColor: "var(--mantine-color-primary)",
+            className="weather-card weather-daily-card"
+            classNames={{
+              root: "weather-card-root",
             }}
           >
-            <Stack gap="md">
-              <Group justify="space-between" align="flex-start" wrap="nowrap">
-                <Stack gap={4}>
-                  <Text fw={600} size="lg" c="white" lh={1.2}>
+            <Stack gap="sm">
+              <Group justify="space-between" wrap="nowrap">
+                <Stack gap={0}>
+                  <Text fw={600} size="lg" c="white">
                     {convertTimeStampToDay(day.dt)}
                   </Text>
                   <Text
                     size="sm"
                     c="indigo.2"
-                    fw={500}
-                    style={{ textTransform: "capitalize", opacity: 0.7 }}
+                    style={{ textTransform: "capitalize" }}
                   >
                     {day.weather[0].description}
                   </Text>
                 </Stack>
-                <WeatherIcon size={48} code={day.weather[0].icon} />
+                <WeatherIcon size={40} code={day.weather[0].icon} />
               </Group>
 
-              <Group gap="xs" align="center">
-                <Text size="xl" fw={800} c="white" fz={"xl"}>
+              <Group gap="xs" align="center" mt="xs">
+                <Text fw={600} c="indigo.1" size="xl">
                   {tempMathRound(day.temp.max)}
                   {unitSymbol}
                 </Text>
-                <Box
-                  style={{
-                    height: "4px",
-                    width: "40px",
-                    borderRadius: "2px",
-                    background:
-                      "linear-gradient(90deg, var(--mantine-color-orange-6), var(--mantine-color-cyan-6))",
-                    opacity: 0.6,
-                  }}
-                />
-                <Text
-                  size="md"
-                  fw={600}
-                  c="indigo.1"
-                  fz={"xl"}
-                  style={{ opacity: 0.6 }}
-                >
+                <Box className="weather-card-temp-line" />
+                <Text fw={600} c="indigo.2" size="xl">
                   {tempMathRound(day.temp.min)}
                   {unitSymbol}
                 </Text>
               </Group>
 
-              <Divider color="rgba(255, 255, 255, 0.08)" />
-
-              <SimpleGrid cols={2} spacing="xs">
-                <Group gap={6} wrap="nowrap" title="Precipitation">
-                  <ThemeIcon variant="transparent" size="sm" c="blue.4">
-                    <CloudRain size={16} />
-                  </ThemeIcon>
-                  <Text
-                    size="xs"
-                    fw={600}
-                    c={day.rain > 0 ? "blue.2" : "gray.6"}
-                  >
-                    {Math.round(day.rain || 0)} mm
-                  </Text>
-                </Group>
-
-                {day.snow > 0 ? (
-                  <Group gap={6} wrap="nowrap" title="Snowfall">
-                    <ThemeIcon variant="transparent" size="sm" c="indigo.2">
-                      <Snowflake size={16} />
-                    </ThemeIcon>
-
-                    <Text size="xs" fw={600} c="indigo.1">
-                      {Math.round(day.snow)} mm
-                    </Text>
-                  </Group>
-                ) : (
-                  <Group gap={6} wrap="nowrap" title="Humidity">
-                    <ThemeIcon variant="transparent" size="sm" c="teal.4">
-                      <Droplets size={16} />
-                    </ThemeIcon>
-                    <Text size="xs" fw={600} c="gray.6">
-                      {day.humidity}%
-                    </Text>
-                  </Group>
-                )}
-                <Group gap={6} wrap="nowrap" title="Wind Speed & Direction">
-                  <ThemeIcon variant="transparent" size="sm" c="indigo.2">
-                    <Wind size={16} />
-                  </ThemeIcon>
-                  <Text size="xs" fw={600} c="indigo.1">
-                    {`${Math.round(day.wind_speed)} m/s ${degToDir(day.wind_deg)} ${day.wind_gust ? `(${Math.round(day.wind_gust)})` : ""}`}
-                  </Text>
-                </Group>
-                <Group gap={6} wrap="nowrap" title="UV Index">
-                  <ThemeIcon variant="transparent" size="sm" c="yellow.4">
-                    <SunDim size={16} />
-                  </ThemeIcon>
-                  <Text size="xs" fw={600} c="indigo.1">
-                    {day.uvi} {getUVCategory(day.uvi)}
-                  </Text>
-                </Group>
-              </SimpleGrid>
+              <Text
+                size="xs"
+                ta="center"
+                c="indigo.2"
+                mt={4}
+                style={{ opacity: 0.8 }}
+              >
+                Click for details
+              </Text>
             </Stack>
           </Paper>
         ))}
       </SimpleGrid>
+
+      <Modal
+        opened={opened}
+        onClose={close}
+        centered
+        radius="md"
+        title={
+          selectedDay ? convertTimeStampToDay(selectedDay.dt) + " Forecast" : ""
+        }
+        overlayProps={{
+          backgroundOpacity: 0.5,
+          blur: 9,
+        }}
+        styles={{
+          content: {
+            backgroundColor: "#1a1b3e",
+            border: "1px solid rgba(255,255,255,0.1)",
+            boxShadow: "0 20px 40px rgba(0,0,0,0.4)",
+          },
+          header: {
+            backgroundColor: "transparent",
+          },
+          title: {
+            color: "white",
+            fontWeight: 700,
+            fontSize: "1.2rem",
+          },
+          close: {
+            color: "white",
+          },
+        }}
+      >
+        <DailyForecastDetail
+          day={selectedDay}
+          unitSymbol={unitSymbol}
+          weatherUnit={weatherUnit}
+        />
+      </Modal>
     </Stack>
   );
 };

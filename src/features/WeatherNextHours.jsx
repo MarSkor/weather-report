@@ -1,66 +1,63 @@
-import { Paper, Text, SimpleGrid, Stack, Title, Box } from "@mantine/core";
+import {
+  Paper,
+  Text,
+  SimpleGrid,
+  Stack,
+  Title,
+  Box,
+  Group,
+  useMantineTheme,
+} from "@mantine/core";
+
 import { Droplets } from "lucide-react";
 import { tempMathRound, convertTimeStamp } from "@/utils/weatherHelpers";
 import WeatherIcon from "@/components/WeatherIcon";
 
 const WeatherNextHours = ({ data, unit }) => {
-  const unitSymbol = unit === "metric" ? "°C" : "°F";
+  const theme = useMantineTheme();
+  const unitSymbol = unit === "metric" ? "°" : "°";
   const hourlyData = data.slice(1, 7);
 
   return (
     <Box>
-      <Title
-        order={4}
-        mb="md"
-        fw={600}
-        color="indigo.1"
-        style={{ textTransform: "uppercase", letterSpacing: "1px" }}
-      >
-        Upcoming Hours
-      </Title>
+      <Group justify="space-between" mb="lg">
+        <Title order={4} fw={600} c="indigo.1" lts={1} tt={"uppercase"}>
+          Hourly Forecast
+        </Title>
+      </Group>
 
-      <SimpleGrid cols={{ base: 2, sm: 3, lg: 6 }} spacing="md">
+      <SimpleGrid cols={{ base: 3, sm: 3, lg: 6 }} spacing="xs">
         {hourlyData.map((hour, index) => (
           <Paper
             key={index}
             p="sm"
-            radius="md"
-            className="weather-card"
-            style={{
-              backgroundColor: "var(--mantine-color-primary)",
-            }}
+            radius="lg"
+            className="weather-card weather-hourly-card"
           >
             <Stack align="center" gap={4}>
               <Text size="sm" fw={600} c="indigo.2">
                 {convertTimeStamp(hour.dt)}
               </Text>
 
-              <Box py={4}>
-                <WeatherIcon size={42} code={hour.weather[0].icon} />
+              <Box py={2}>
+                <WeatherIcon size={48} code={hour.weather[0].icon} />
               </Box>
 
-              <Text fw={500} size="xl">
+              <Text fw={700} size="lg" lts={-0.5}>
                 {tempMathRound(hour.temp)}
                 {unitSymbol}
               </Text>
 
-              {hour.pop > 0 && (
-                <Stack align="center" gap={0}>
-                  <Text
-                    size="xs"
-                    c="blue"
-                    fw={400}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "2px",
-                    }}
-                  >
-                    <Droplets size={10} />
-                    {Math.round(hour.pop * 100)}%
-                  </Text>
-                </Stack>
-              )}
+              <Group gap={2} opacity={hour.pop > 0 ? 1 : 0}>
+                <Droplets
+                  size={12}
+                  color={theme.colors.blue[5]}
+                  fill={theme.colors.blue[5]}
+                />
+                <Text size="xs" fw={700} c="blue.6">
+                  {Math.round(hour.pop * 100)}%
+                </Text>
+              </Group>
             </Stack>
           </Paper>
         ))}
