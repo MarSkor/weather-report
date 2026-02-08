@@ -1,9 +1,10 @@
-import { Container, Flex, Text } from "@mantine/core";
+import { Container } from "@mantine/core";
 import { useWeather } from "@/hooks/useWeather";
 import WeatherDashboard from "@/features/WeatherDashboard";
 import ErrorMessage from "../components/ErrorMessage";
 import WeatherSkeleton from "../components/WeatherSkeleton";
 import WeatherNavbar from "../components/WeatherNavbar";
+import Footer from "@/components/Footer";
 
 const Weather = ({ defaultCity }) => {
   const {
@@ -46,22 +47,7 @@ const Weather = ({ defaultCity }) => {
           )
         )}
       </Container>
-      <Container size="xl" component={"section"} className="layout__footer">
-        <Flex component="footer" mt={"md"}>
-          <Text
-            fw={500}
-            c={"indigo.2"}
-            opacity={0.5}
-            size="sm"
-            tt={"uppercase"}
-            component="a"
-            href="https://github.com/MarSkor/weather-report"
-            target="_blank"
-          >
-            Source Code
-          </Text>
-        </Flex>
-      </Container>
+      <Footer />
     </main>
   );
 };
