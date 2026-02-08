@@ -1,4 +1,4 @@
-import Weather from "./components/Weather";
+import Weather from "./features/Weather";
 
 const App = () => {
   return <Weather defaultCity="Oslo" />;

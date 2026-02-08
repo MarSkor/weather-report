@@ -7,7 +7,7 @@ export const useWeather = (defaultCity) => {
   const [isError, setIsError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [unit, setUnit] = useState(() => {
-    return localStorage.getItem("weatherUnit") || "metric";
+    return localStorage.getItem("weather-unit") || "metric";
   });
   const [suggestions, setSuggestions] = useState([]);
 

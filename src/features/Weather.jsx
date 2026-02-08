@@ -1,9 +1,9 @@
 import { Container, Flex, Text } from "@mantine/core";
 import { useWeather } from "@/hooks/useWeather";
 import WeatherDashboard from "@/features/WeatherDashboard";
-import ErrorMessage from "./ErrorMessage";
-import WeatherSkeleton from "./WeatherSkeleton";
-import WeatherNavbar from "./WeatherNavbar";
+import ErrorMessage from "../components/ErrorMessage";
+import WeatherSkeleton from "../components/WeatherSkeleton";
+import WeatherNavbar from "../components/WeatherNavbar";
 
 const Weather = ({ defaultCity }) => {
   const {
